@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:integrate_db_sqllite/util/notification_helper.dart';
 
 import 'Home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationHelper.init();
   runApp(const MyApp());
 }
 

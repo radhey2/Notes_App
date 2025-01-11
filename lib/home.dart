@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:integrate_db_sqllite/DB_CONFIG/DbConfig.dart';
+import 'package:integrate_db_sqllite/util/notification_helper.dart';
 import 'package:share_plus/share_plus.dart';
 
 class Home extends StatefulWidget {
@@ -29,6 +30,37 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  Future<DateTime?> selectDateTime(BuildContext context) async {
+    // Pick a date
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (selectedDate != null) {
+      // Pick a time
+      TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+      );
+
+      if (selectedTime != null) {
+        // Combine the selected date and time into a DateTime object
+        return DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
+      }
+    }
+
+    return null; // Return null if the user cancels the input
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +78,19 @@ class _HomeState extends State<Home> {
             Icon(Icons.note_alt),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.alarm), // Alarm icon
+            onPressed: () async {
+              // Define what happens when the alarm icon is pressed
+              DateTime? userSelectedDateTime = await selectDateTime(context);
+              if (userSelectedDateTime != null) {
+                NotificationHelper.scheduledNotification("Gentle Reminder !",
+                    "Please perform your task", userSelectedDateTime);
+              }
+            },
+          ),
+        ],
       ),
       body: allNotes.isNotEmpty
           ? ListView.builder(
