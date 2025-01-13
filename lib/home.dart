@@ -78,19 +78,7 @@ class _HomeState extends State<Home> {
             Icon(Icons.note_alt),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.alarm), // Alarm icon
-            onPressed: () async {
-              // Define what happens when the alarm icon is pressed
-              DateTime? userSelectedDateTime = await selectDateTime(context);
-              if (userSelectedDateTime != null) {
-                NotificationHelper.scheduledNotification("Gentle Reminder !",
-                    "Please perform your task", userSelectedDateTime);
-              }
-            },
-          ),
-        ],
+        actions: const [],
       ),
       body: allNotes.isNotEmpty
           ? ListView.builder(
@@ -107,205 +95,78 @@ class _HomeState extends State<Home> {
                         ),
                         tileColor: const Color(0xFFF5E1A4),
                         trailing: SizedBox(
-                          width: 120,
-                          child: Row(
-                            children: [
-                              IconButton(
+                          // width: 120,
+                          child: PopupMenuTheme(
+                            data: PopupMenuThemeData(
+                              color: Colors.amber
+                                  .shade100, // Background color of the menu
+                              // elevation: 2,
+                              // Shadow of the menu
+                            ),
+                            child: PopupMenuButton<String>(
+                                icon: const Icon(
+                                  Icons.more_vert,
                                   color: Colors.black,
-                                  onPressed: () {
-                                    setState(() {
-                                      dbObj!.delete(
-                                          sno: allNotes[index]
-                                              [DbConfig.COL_SR_NO]);
-                                      getNotes();
-                                    });
-                                  },
-                                  icon: const Icon(Icons.delete)),
-                              IconButton(
-                                  color: Colors.black,
-                                  onPressed: () {
-                                    titleController.text =
-                                        allNotes[index][DbConfig.COL_TITLE];
-                                    descController.text = allNotes[index]
-                                        [DbConfig.COL_DESCRIPTION];
-                                    showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        context: context,
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: EdgeInsets.only(
-                                              bottom: MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom, // Adjust for keyboard visibility
-                                            ),
-                                            child: SingleChildScrollView(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.all(10),
-                                                child: Form(
-                                                  key: _formKey,
-                                                  child: Column(
-                                                    children: [
-                                                      const Text(
-                                                        'Edit Note',
-                                                        style: TextStyle(
-                                                            fontSize: 25,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 25,
-                                                      ),
-                                                      TextFormField(
-                                                        controller:
-                                                            titleController,
-                                                        decoration:
-                                                            const InputDecoration(
-                                                          hintText:
-                                                              'Enter Title',
-                                                          label: Text('Title'),
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            // This makes the border rectangular
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        10)), // Optional: Add rounded corners
-                                                          ),
-                                                        ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'title is required'; // Error message when field is empty
-                                                          }
-                                                          return null; // No error
-                                                        },
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 25,
-                                                      ),
-                                                      TextFormField(
-                                                        maxLines: 5,
-                                                        controller:
-                                                            descController,
-                                                        decoration:
-                                                            const InputDecoration(
-                                                          hintText:
-                                                              'Enter Description',
-                                                          label: Text(
-                                                              'Description'),
-                                                          border:
-                                                              OutlineInputBorder(
-                                                            // This makes the border rectangular
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        10)), // Optional: Add rounded corners
-                                                          ),
-                                                        ),
-                                                        validator: (value) {
-                                                          if (value == null ||
-                                                              value.isEmpty) {
-                                                            return 'Description is required'; // Error message when field is empty
-                                                          }
-                                                          return null; // No error
-                                                        },
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                OutlinedButton(
-                                                                    style: OutlinedButton.styleFrom(
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                10),
-                                                                            side: const BorderSide(
-                                                                                width:
-                                                                                    4,
-                                                                                color: Colors
-                                                                                    .black))),
-                                                                    onPressed:
-                                                                        () async {
-                                                                      DateTime
-                                                                          now =
-                                                                          DateTime
-                                                                              .now();
-                                                                      String
-                                                                          formattedDateTime =
-                                                                          '${now.toIso8601String().substring(0, 10)} ${now.toIso8601String().substring(11, 19)}';
-                                                                      bool check = await dbObj!.updateNote(
-                                                                          sno: allNotes[index][DbConfig
-                                                                              .COL_SR_NO],
-                                                                          title: titleController
-                                                                              .text,
-                                                                          desc: descController
-                                                                              .text,
-                                                                          datetime:
-                                                                              formattedDateTime);
-
-                                                                      if (check) {
-                                                                        getNotes();
-                                                                        titleController
-                                                                            .clear();
-                                                                        descController
-                                                                            .clear();
-                                                                      }
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'Update Note')),
-                                                          ),
-                                                          const SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                OutlinedButton(
-                                                                    style: OutlinedButton.styleFrom(
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius: BorderRadius.circular(
-                                                                                10),
-                                                                            side: const BorderSide(
-                                                                                width:
-                                                                                    4,
-                                                                                color: Colors
-                                                                                    .black))),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    },
-                                                                    child: const Text(
-                                                                        'Cancel')),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                  },
-                                  icon: const Icon(Icons.edit)),
-                              Expanded(
-                                  child: IconButton(
-                                      onPressed: () {
-                                        Share.share(
-                                            'Title : ${allNotes[index][DbConfig.COL_TITLE]}  Description :${allNotes[index][DbConfig.COL_DESCRIPTION]}');
-                                      },
-                                      icon: const Icon(
-                                        Icons.share,
-                                        color: Colors.black,
-                                      )))
-                            ],
+                                ),
+                                onSelected: (value) {},
+                                itemBuilder: (BuildContext context) {
+                                  return [
+                                    PopupMenuItem<String>(
+                                      value: 'delete',
+                                      child: SizedBox(
+                                        width: 80,
+                                        child: IconButton(
+                                            color: Colors.black,
+                                            onPressed: () {
+                                              setState(() {
+                                                _delete(index);
+                                              });
+                                            },
+                                            icon: const Icon(Icons.delete)),
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'edit',
+                                      child: SizedBox(
+                                        width: 80,
+                                        child: IconButton(
+                                            color: Colors.black,
+                                            onPressed: () {
+                                              _editAction(index);
+                                            },
+                                            icon: const Icon(Icons.edit)),
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'share',
+                                      child: SizedBox(
+                                        width: 80,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              _share(index);
+                                            },
+                                            icon: const Icon(
+                                              Icons.share,
+                                              color: Colors.black,
+                                            )),
+                                      ),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: 'share',
+                                      child: SizedBox(
+                                        width: 80,
+                                        child: IconButton(
+                                            onPressed: () {
+                                              _alarm(index);
+                                            },
+                                            icon: const Icon(
+                                              Icons.alarm,
+                                              color: Colors.black,
+                                            )),
+                                      ),
+                                    ),
+                                  ];
+                                }),
                           ),
                         ),
                         leading: Text(
@@ -502,5 +363,149 @@ class _HomeState extends State<Home> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void _delete(index) {
+    dbObj!.delete(sno: allNotes[index][DbConfig.COL_SR_NO]);
+    getNotes();
+  }
+
+  void _share(index) {
+    Share.share(
+        'Title : ${allNotes[index][DbConfig.COL_TITLE]}  Description :${allNotes[index][DbConfig.COL_DESCRIPTION]}');
+  }
+
+  Future<void> _alarm(index) async {
+    DateTime? userSelectedDateTime = await selectDateTime(context);
+    if (userSelectedDateTime != null) {
+      NotificationHelper.scheduledNotification(index, "Gentle Reminder !",
+          "${allNotes[index][DbConfig.COL_TITLE]}", userSelectedDateTime);
+    }
+  }
+
+  // Action for Edit
+  void _editAction(index) {
+    titleController.text = allNotes[index][DbConfig.COL_TITLE];
+    descController.text = allNotes[index][DbConfig.COL_DESCRIPTION];
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context)
+                  .viewInsets
+                  .bottom, // Adjust for keyboard visibility
+            ),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Edit Note',
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      TextFormField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter Title',
+                          label: Text('Title'),
+                          border: OutlineInputBorder(
+                            // This makes the border rectangular
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                10)), // Optional: Add rounded corners
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'title is required'; // Error message when field is empty
+                          }
+                          return null; // No error
+                        },
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      TextFormField(
+                        maxLines: 5,
+                        controller: descController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter Description',
+                          label: Text('Description'),
+                          border: OutlineInputBorder(
+                            // This makes the border rectangular
+                            borderRadius: BorderRadius.all(Radius.circular(
+                                10)), // Optional: Add rounded corners
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Description is required'; // Error message when field is empty
+                          }
+                          return null; // No error
+                        },
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: const BorderSide(
+                                            width: 4, color: Colors.black))),
+                                onPressed: () async {
+                                  DateTime now = DateTime.now();
+                                  String formattedDateTime =
+                                      '${now.toIso8601String().substring(0, 10)} ${now.toIso8601String().substring(11, 19)}';
+                                  bool check = await dbObj!.updateNote(
+                                      sno: allNotes[index][DbConfig.COL_SR_NO],
+                                      title: titleController.text,
+                                      desc: descController.text,
+                                      datetime: formattedDateTime);
+
+                                  if (check) {
+                                    getNotes();
+                                    titleController.clear();
+                                    descController.clear();
+                                  }
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Update Note')),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        side: const BorderSide(
+                                            width: 4, color: Colors.black))),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel')),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

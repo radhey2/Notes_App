@@ -13,7 +13,7 @@ class NotificationHelper {
   }
 
   static scheduledNotification(
-      String title, String body, DateTime userSelectedDateTime) async {
+      int id, String title, String body, DateTime userSelectedDateTime) async {
     var androidDetails = const AndroidNotificationDetails(
         "important_notification", "My channel",
         importance: Importance.max, priority: Priority.high);
@@ -23,10 +23,10 @@ class NotificationHelper {
 
     var notificationDetails = NotificationDetails(android: androidDetails);
     await _notification.zonedSchedule(
-        0, title, body, scheduledTime, notificationDetails,
+        id, title, body, scheduledTime, notificationDetails,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        // androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         androidAllowWhileIdle: true);
   }
 
