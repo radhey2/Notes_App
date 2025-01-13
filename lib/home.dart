@@ -372,7 +372,7 @@ class _HomeState extends State<Home> {
 
   void _share(index) {
     Share.share(
-        'Title : ${allNotes[index][DbConfig.COL_TITLE]}  Description :${allNotes[index][DbConfig.COL_DESCRIPTION]}');
+        'Title: ${allNotes[index][DbConfig.COL_TITLE]}\nDescription: ${allNotes[index][DbConfig.COL_DESCRIPTION]}');
   }
 
   Future<void> _alarm(index) async {
