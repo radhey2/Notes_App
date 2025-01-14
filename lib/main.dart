@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrate_db_sqllite/splash_screen/splash_screen.dart';
 import 'package:integrate_db_sqllite/util/notification_helper.dart';
 
 import 'Home.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      home: const Home(),
+      home: const SplashScreen(),
     );
   }
 }
